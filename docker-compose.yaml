@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    ports:
+      - "5900:5900"
+    environment:
+      DISPLAY: ":99"  # Для работы GUI через Xvfb
+    depends_on:
+      - db
+    networks:
+      - mysql_network
+    env_file:
+      - .env
+
+  db:
+    container_name: "mysql_db"
+    image: mysql:latest
+    ports:
+      - "3336:3306"
+    networks:
+      - mysql_network
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "shortLinks"
+      MYSQL_USER: "shortLinks"
+      MYSQL_PASSWORD: "shortLinks"
+    volumes:
+      - mysql_volume:/var/lib/mysql
+    restart: always
+
+networks:
+  mysql_network:
+    name: "mysql_network"
+
+volumes:
+  mysql_volume:
+    name: "mysql_volume"
